@@ -1,0 +1,198 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is an API for a Link Shortening Service",
+    "version": "1.0.0",
+    "title": "Link Shortening Service",
+    "contact": {
+      "email": "kris@krislange.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "localhost:6020",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "admins",
+      "description": "Secured Admin-only calls"
+    },
+    {
+      "name": "anyone",
+      "description": "Operations available to anyone"
+    }
+  ],
+  "securityDefinitions": {
+    "OAuth2": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://login.microsoftonline.com/5c00dfc4-9bac-47f4-9d66-be026c682722/oauth2/v2.0/authorize",
+      "tokenUrl": "https://login.microsoftonline.com/5c00dfc4-9bac-47f4-9d66-be026c682722/oauth2/v2.0/token",
+      "scopes": {
+        "url.write": "Grants write access"
+      }
+    }
+  },
+  "security": [
+    {
+      "OAuth2": [
+        "url.write"
+      ]
+    }
+  ],
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/lnk": {
+      "put": {
+        "tags": [
+          "admins"
+        ],
+        "summary": "adds a link with the specified shortUrlId",
+        "description": "Post a URL to be shortened\n",
+        "operationId": "postUrl",
+        "security": [
+          {
+            "OAuth2": [
+              "url.write"
+            ]
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "postUrlSpec",
+            "description": "The URL which needs to be shortened",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/NewUrlSpec"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A new shortURL was created!",
+            "schema": {
+              "$ref": "#/definitions/UrlObject"
+            }
+          }
+        }
+      }
+    },
+    "/lnk/{shortUrlId}": {
+      "get": {
+        "tags": [
+          "anyone"
+        ],
+        "summary": "fetches Url from shortUrlId",
+        "description": "Get the URL who's shortcut is shortUrlId\n",
+        "operationId": "getUrl",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "shortUrlId",
+            "in": "path",
+            "description": "the shortUrl ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "301": {
+            "description": "link exists, follow Location header"
+          },
+          "404": {
+            "description": "link does not exist"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "admins"
+        ],
+        "summary": "adds a link with the specified shortUrlId",
+        "description": "Put a URL who's shortcut is shortUrlId\n",
+        "operationId": "putUrl",
+        "security": [
+          {
+            "OAuth2": [
+              "url.write"
+            ]
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "shortUrlId",
+            "in": "path",
+            "description": "the shortUrl ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "newUrlSpec",
+            "description": "The URL which needs to be shortened",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/NewUrlSpec"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A new shortUrl was created!",
+            "schema": {
+              "$ref": "#/definitions/UrlObject"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "UrlObject": {
+      "type": "object",
+      "required": [
+        "longUrl",
+        "shortUrlId"
+      ],
+      "properties": {
+        "shortUrlId": {
+          "type": "string",
+          "example": "abc"
+        },
+        "longUrl": {
+          "type": "string",
+          "example": "yahoo.com"
+        }
+      },
+      "example": {
+        "shortUrlId": "abc",
+        "longUrl": "yahoo.com"
+      }
+    },
+    "NewUrlSpec": {
+      "type": "object",
+      "required": [
+        "longUrl"
+      ],
+      "properties": {
+        "longUrl": {
+          "type": "string",
+          "example": "yahoo.com"
+        }
+      }
+    }
+  }
+}
