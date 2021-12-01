@@ -1,8 +1,10 @@
-﻿namespace KrisLange.UrlShortener.Store
+﻿using KrisLange.UrlShortener.Models.DomainModels;
+
+namespace KrisLange.UrlShortener.Store
 {
     public interface IKeyValueStore
     {
-        public string Get(string key);
-        public void Put(string key, string value);
+        public UrlModel Get(string key);
+        public void Put(UrlModel url);
     }
 }

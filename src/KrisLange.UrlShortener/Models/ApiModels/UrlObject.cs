@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
+using KrisLange.UrlShortener.Models.DomainModels;
 using Newtonsoft.Json;
 
 namespace KrisLange.UrlShortener.Models
@@ -117,6 +118,13 @@ namespace KrisLange.UrlShortener.Models
                     hashCode = hashCode * 59 + LongUrl.GetHashCode();
                 return hashCode;
             }
+        }
+
+        public static UrlObject Convert(UrlModel urlModel)
+        {
+            UrlObject result = new UrlObject() {ShortUrlId = urlModel.ShortUrlId, LongUrl = urlModel.LongUrl};
+
+            return result;
         }
 
         #region Operators

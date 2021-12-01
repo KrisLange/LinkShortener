@@ -56,7 +56,8 @@ namespace KrisLange.UrlShortener.Controllers
         {
             string shortUrlId = Math.Abs(postUrlSpec.GetHashCode()).ToString().Substring(0, 4);
             
-            _kvStore.Put(shortUrlId, postUrlSpec.LongUrl);
+            
+            //_kvStore.Put(TODO);
 
             UrlObject result = new UrlObject();
             result.ShortUrlId = shortUrlId;
@@ -78,7 +79,7 @@ namespace KrisLange.UrlShortener.Controllers
         [SwaggerResponse(statusCode: 201, type: typeof(UrlObject), description: "A new shortUrl was created!")]
         public virtual IActionResult PutUrl([FromRoute][Required]string shortUrlId, [FromBody]NewUrlSpec newUrlSpec)
         { 
-            _kvStore.Put(shortUrlId, newUrlSpec.LongUrl);
+            //_kvStore.Put(TODO);
 
             UrlObject result = new UrlObject();
             result.ShortUrlId = shortUrlId;

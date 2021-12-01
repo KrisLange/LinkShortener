@@ -1,31 +1,35 @@
 ﻿using System.Collections.Generic;
+using KrisLange.UrlShortener.Models;
+using KrisLange.UrlShortener.Models.DomainModels;
 
 namespace KrisLange.UrlShortener.Store
 {
     public class InMemoryKvs: IKeyValueStore
     {
-        private readonly Dictionary<string, string> _map;
+        private readonly Dictionary<string, UrlDictionaryEntity> _map;
         
         public InMemoryKvs()
         {
-            _map = new Dictionary<string, string>();
+            _map = new Dictionary<string, UrlDictionaryEntity>();
         }
 
-        public string Get(string key)
+        public UrlModel Get(string key)
         {
-            string value = "";
+            UrlDictionaryEntity tmp;
 
-            if (!_map.TryGetValue(key, out value))
+            if (!_map.TryGetValue(key, out tmp))
             {
                 return null;
             }
 
-            return value;
+            UrlModel result = UrlDictionaryEntity.Convert(tmp);
+            return result;
         }
 
-        public void Put(string key, string value)
+        public void Put(UrlModel urlModel)
         {
-            _map[key] = value;
+            UrlDictionaryEntity value = UrlDictionaryEntity.Convert(urlModel);
+            _map[value.ShortUrlId] = value;
         }
     }
 }

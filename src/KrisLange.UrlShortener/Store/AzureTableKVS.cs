@@ -2,6 +2,7 @@
 using Azure.Data.Tables;
 using Azure.Data.Tables.Models;
 using KrisLange.UrlShortener.Models;
+using KrisLange.UrlShortener.Models.DomainModels;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
@@ -18,19 +19,19 @@ namespace KrisLange.UrlShortener.Store
             _table = new TableClient(asc.Value.ConnectionString, asc.Value.TableName);
         }
 
-        public string Get(string key)
+        public UrlModel Get(string key)
         {
             var tmp = _table.GetEntity<UrlTableEntity>(key, key);
 
-            return tmp.Value.Raw_URL;
+            var result = UrlTableEntity.Convert(tmp.Value);
+            return result;
         }
 
-        public void Put(string key, string value)
+        public void Put(UrlModel url)
         {
-            var urlRecord = new UrlTableEntity(key);
-            urlRecord.Raw_URL = value;
+            var urlTableEntity = UrlTableEntity.Convert(url);
 
-            _table.AddEntity<UrlTableEntity>(urlRecord);
+            _table.AddEntity<UrlTableEntity>(urlTableEntity);
         }
     }
 }

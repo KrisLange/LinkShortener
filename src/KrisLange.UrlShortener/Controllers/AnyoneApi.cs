@@ -55,7 +55,7 @@ namespace KrisLange.UrlShortener.Controllers
                 return StatusCode(404);
             }
 
-            return this.Redirect(longUrl);
+            return this.Redirect(longUrl.LongUrl);
         }
     }
 }
