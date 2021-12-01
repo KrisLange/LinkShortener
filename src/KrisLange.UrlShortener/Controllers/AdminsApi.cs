@@ -20,10 +20,13 @@ using System.Formats.Asn1;
 using KrisLange.UrlShortener.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using KrisLange.UrlShortener.Models;
+using KrisLange.UrlShortener.Models.DomainModels;
 using KrisLange.UrlShortener.Store;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Web.Resource;
 using Microsoft.OpenApi.Writers;
+using Serilog;
 
 namespace KrisLange.UrlShortener.Controllers
 {
@@ -34,10 +37,11 @@ namespace KrisLange.UrlShortener.Controllers
     [ApiController]
     public class AdminsApiController : ControllerBase
     {
+        private readonly ILogger<AdminsApiController> _logger;
         private readonly IKeyValueStore _kvStore;
-
-        public AdminsApiController(IKeyValueStore kvStore)
+        public AdminsApiController(ILogger<AdminsApiController> logger, IKeyValueStore kvStore)
         {
+            _logger = logger;
             _kvStore = kvStore;
         }
 
@@ -56,12 +60,13 @@ namespace KrisLange.UrlShortener.Controllers
         {
             string shortUrlId = Math.Abs(postUrlSpec.GetHashCode()).ToString().Substring(0, 4);
             
-            
-            //_kvStore.Put(TODO);
+            var url = new UrlModel() {ShortUrlId = shortUrlId, LongUrl = postUrlSpec.LongUrl};
+            _logger.LogInformation("PutUrl: {@url}", url);
 
-            UrlObject result = new UrlObject();
-            result.ShortUrlId = shortUrlId;
-            result.LongUrl = postUrlSpec.LongUrl;
+            _kvStore.Put(url);
+
+            UrlObject result = UrlObject.Convert(url);
+            
             return this.Ok(result);
         }
 
@@ -78,12 +83,14 @@ namespace KrisLange.UrlShortener.Controllers
         [SwaggerOperation("PutUrl")]
         [SwaggerResponse(statusCode: 201, type: typeof(UrlObject), description: "A new shortUrl was created!")]
         public virtual IActionResult PutUrl([FromRoute][Required]string shortUrlId, [FromBody]NewUrlSpec newUrlSpec)
-        { 
-            //_kvStore.Put(TODO);
+        {
+            var url = new UrlModel() {ShortUrlId = shortUrlId, LongUrl = newUrlSpec.LongUrl}; 
+            _logger.LogInformation("PostUrl: {@url}", url);
 
-            UrlObject result = new UrlObject();
-            result.ShortUrlId = shortUrlId;
-            result.LongUrl = newUrlSpec.LongUrl;
+            _kvStore.Put(url);
+
+            UrlObject result = UrlObject.Convert(url);
+            
             return this.Created(shortUrlId, result);
         }
     }

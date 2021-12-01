@@ -28,6 +28,7 @@ using KrisLange.UrlShortener.Filters;
 using KrisLange.UrlShortener.Models;
 using KrisLange.UrlShortener.Store;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace KrisLange.UrlShortener
@@ -129,7 +130,7 @@ namespace KrisLange.UrlShortener
             services.Configure<AzureStorageConfig>(Configuration.GetSection("AzureStorageConfig"));
             services.AddOptions<AzureStorageConfig>();
             
-            services.AddSingleton<IKeyValueStore, AzureTableKVS>();
+            services.AddSingleton<IKeyValueStore, InMemoryKvs>();
             //services.AddControllersWithViews();
         }
 
@@ -163,7 +164,10 @@ namespace KrisLange.UrlShortener
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                if (env.IsDevelopment())
+                    endpoints.MapControllers().WithMetadata(new AllowAnonymousAttribute());
+                else
+                    endpoints.MapControllers();
             });
 
             if (env.IsDevelopment())

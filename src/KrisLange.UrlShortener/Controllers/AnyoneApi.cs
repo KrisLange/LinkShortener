@@ -20,6 +20,7 @@ using KrisLange.UrlShortener.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using KrisLange.UrlShortener.Models;
 using KrisLange.UrlShortener.Store;
+using Microsoft.Extensions.Logging;
 
 namespace KrisLange.UrlShortener.Controllers
 { 
@@ -30,10 +31,12 @@ namespace KrisLange.UrlShortener.Controllers
     public class AnyoneApiController : ControllerBase
     {
         private readonly IKeyValueStore _kvStore;
+        private readonly ILogger<AnyoneApiController> _logger;
 
-        public AnyoneApiController(IKeyValueStore kvStore)
+        public AnyoneApiController(ILogger<AnyoneApiController> logger, IKeyValueStore kvStore)
         {
             _kvStore = kvStore;
+            _logger = logger;
         }
         /// <summary>
         /// fetches Url from shortUrlId
@@ -43,11 +46,12 @@ namespace KrisLange.UrlShortener.Controllers
         /// <response code="301">link exists, follow Location header</response>
         /// <response code="404">link does not exist</response>
         [HttpGet]
-        [Route("//lnk/{shortUrlId}")]
+        [Route("/lnk/{shortUrlId}")]
         [ValidateModelState]
         [SwaggerOperation("GetUrl")]
         public virtual IActionResult GetUrl([FromRoute][Required]string shortUrlId)
         {
+            _logger.LogInformation("GetUrl: {@shortUrlId}", shortUrlId);
             var longUrl = _kvStore.Get(shortUrlId);
 
             if (longUrl == null)
