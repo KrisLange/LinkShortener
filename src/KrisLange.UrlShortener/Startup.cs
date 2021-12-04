@@ -127,10 +127,20 @@ namespace KrisLange.UrlShortener
                     
                     
                 });
-            services.Configure<AzureStorageConfig>(Configuration.GetSection("AzureStorageConfig"));
-            services.AddOptions<AzureStorageConfig>();
-            
-            services.AddSingleton<IKeyValueStore, AzureTableKVS>();
+
+            var linkStorageConfig = Configuration.GetSection("LinkStorageConfig").Get<LinkStorageConfig>();
+
+            if (linkStorageConfig.UnderlyingStorageType == LinkStorageConfig.StorageType.AzureTable)
+            {
+                services.Configure<AzureStorageConfig>(Configuration.GetSection("AzureStorageConfig"));
+                services.AddOptions<AzureStorageConfig>();
+
+                services.AddSingleton<IKeyValueStore, AzureTableKVS>();
+            }
+            else
+            {
+                services.AddSingleton<IKeyValueStore, InMemoryKvs>();
+            }
             //services.AddControllersWithViews();
         }
 

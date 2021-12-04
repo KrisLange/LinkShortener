@@ -26,6 +26,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\ApiModels" />
-    <Folder Include="Models\ConfigModels" />
   </ItemGroup>
 </Project>
