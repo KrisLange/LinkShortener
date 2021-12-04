@@ -18,7 +18,6 @@ namespace KrisLange.UrlShortener.Models
         }
 
         public string RawURL { get; set; }
-        public DateTime CreationTime { get; set; }
         public string PartitionKey { get; set; }
         public string RowKey { get; set; }
         public DateTimeOffset? Timestamp { get; set; }
@@ -37,7 +36,7 @@ namespace KrisLange.UrlShortener.Models
             UrlModel result = new UrlModel()
             {
                 ShortUrlId = urlTableEntity.PartitionKey, LongUrl = urlTableEntity.RawURL,
-                CreationTime = urlTableEntity.CreationTime, LastModifiedTime = urlTableEntity.Timestamp.Value.UtcDateTime
+                LastModifiedTime = urlTableEntity.Timestamp.Value.UtcDateTime
             };
             return result;
         }

@@ -130,7 +130,7 @@ namespace KrisLange.UrlShortener
             services.Configure<AzureStorageConfig>(Configuration.GetSection("AzureStorageConfig"));
             services.AddOptions<AzureStorageConfig>();
             
-            services.AddSingleton<IKeyValueStore, InMemoryKvs>();
+            services.AddSingleton<IKeyValueStore, AzureTableKVS>();
             //services.AddControllersWithViews();
         }
 
