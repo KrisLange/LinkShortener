@@ -19,7 +19,7 @@ jobs:
       - name: Install dependencies
         run: dotnet restore
       - name: Build
-        run: dotnet publish --configuration Release --no-restore
+        run: dotnet publish --configuration Release --no-restore -o dist/Release
       - name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
         with:
@@ -28,4 +28,4 @@ jobs:
       - name: Adding Known Hosts
         run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
       - name: Deploy with rsync
-        run: rsync -avz src/KrisLange.UrlShortener/bin/Release ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/krislange/krislange.com/dist/
+        run: rsync -avz dist/Release ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/krislange/krislange.com/dist/
