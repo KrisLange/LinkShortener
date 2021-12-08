@@ -3,6 +3,8 @@
     <Description>KrisLange.UrlShortener</Description>
     <Copyright>KrisLange.UrlShortener</Copyright>
     <TargetFramework>netcoreapp5.0</TargetFramework>
+    <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
+    <AspNetCoreModuleName>AspNetCoreModuleV2</AspNetCoreModuleName>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <AssemblyName>KrisLange.UrlShortener</AssemblyName>
