@@ -1,6 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
@@ -47,16 +48,19 @@ namespace KrisLange.UrlShortener
         /// </summary>
         /// <param name="args"></param>
         /// <returns>IWebHostBuilder</returns>
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
+        public static IHostBuilder CreateWebHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((context, config) =>
                 {
                     var builtConfig = config.Build();
 
                     config.AddAzureKeyVault(new Uri(builtConfig["KeyVaultUrl"]), new DefaultAzureCredential(), new KeyVaultSecretManager());
                 })
-                .UseUrls("http://*:80")
                 .UseSerilog()
-                .UseStartup<Startup>();
+                .UseSystemd()
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
     }
 }
